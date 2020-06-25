@@ -12,8 +12,55 @@ namespace TicTacToe
 
         static void Main(string[] args)
         {
+            bool continueGame = true; // Game continues until this is false
             // This is where the logic for repeat-game will go 
-            PlayGame();
+            do
+            {
+                // Continue game prompt boolean var, when false "play again" question will repeat. Needs to be in this context to reset on every repeat game
+                bool validContinueGameResponse = false; 
+                PlayGame();
+
+                // Play again prompt on repeat
+                do
+                {
+                    Console.Write("Would you like to play again? (Y/N): ");
+                    // It would have been better to use ReadKey(), then compare the key to the array of acceptable key responses, and have a generic message
+                    // providing instruction(s) to the user. However, as one must allow user to potentially enter more than one key ("Yes" response in a scrnshot)
+                    // I will use ReadLine() and handle the user input the long way
+
+                    string playAgain = Console.ReadLine();
+
+                    // Process a valid "no" response.
+                    if (playAgain.ToLower() == "n") 
+                    { 
+                        continueGame = false; 
+                        validContinueGameResponse = true; 
+                        continue; // Skip the rest of the evaluation in the do/while loop 
+                    }
+                    
+                    // Process a valid "yes" response.
+                    if (playAgain.ToLower() == "y")
+                    {
+                        continueGame = true;
+                        validContinueGameResponse = true;
+                        continue;
+                    }
+
+                    if (playAgain.Length > 1)
+                    {
+                        Console.WriteLine("Error: String must be exactly one character long. Please try again.");
+                    }
+                    // Save time by checking if the value of the variable playAgain is in an array of acceptable single letter responses. Also caters for
+                    // case insensitivity by converting the response to lowercase by default and then comparing. 
+                    // Read https://stackoverflow.com/questions/13257458/check-if-a-value-is-in-an-array-c 
+                    // Tried using { }.method(), then I read https://stackoverflow.com/questions/30509177/cant-use-an-inline-array-in-c
+                    if (Array.IndexOf((new[] { "y", "n" }), playAgain.ToLower()) == -1 && playAgain.Length == 1)
+                    {
+                        Console.WriteLine("Error: Must be 'Y' or 'N'. Please try again.");
+                    }
+                } while (!validContinueGameResponse);
+            } while (continueGame);
+
         }
 
         static void PlayGame()
@@ -40,7 +87,7 @@ namespace TicTacToe
 
             Console.Clear();
 
-            // Passing arrays as arguments. Could learn from Main() declaration, but the crucial part is that 
+            // Passing arrays as arguments. Could learn from Main() declaration
             void genBoard(char[,] boardVar)
                {
                    Console.WriteLine(horizLine);
