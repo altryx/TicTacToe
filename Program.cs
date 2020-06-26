@@ -26,36 +26,58 @@ namespace TicTacToe
                 // Change player on each run, start with X *** revise ***
                 currentPlayer = (gameCount % 2 == 0) ? 'O' : 'X';
                 
-                // Clear the gameState variable - investigate better way to achieve this
+                // Clear the gameState variable when starting a new game
                 gameState = new char[3, 3] { { ' ', ' ', ' ' }, { ' ', ' ', ' ' }, { ' ', ' ', ' ' } };
-                
-                /*for (int i = 0; i < 3; i++) 
-                {
-                    for (int j = 0; j < 3; j++)
-                    { gameState[i, j] = ' '; }
-                    }
-                */
+            
                 PlayGame();
 
-                // Play again prompt on auto-repeat
+                // Play again on auto-repeat - allows for prompting the player and repeating a game should the user choose so
                 do
                 {
                     Console.Write("Would you like to play again? (Y/N): ");
                     // It would have been better to use ReadKey(), then compare the key to the array of acceptable key responses, and have a generic message
-                    // providing instruction(s) to the user. However, as one must allow user to potentially enter more than one key ("Yes" response in a scrnshot)
-                    // I will use ReadLine() and handle the user input the long way
+                    // providing instruction(s) to the user. This takes care of (playAgain.Length > 1).However, as one must allow user to 
+                    // potentially enter more than one key ("Yes" response in a scrnshot) for this exercise,
+                    // ReadLine() must be used
 
                     string playAgain = Console.ReadLine();
 
-
-                    // **** Remove continue, replace with a if-elseif-else ****
-
+                    // Checking the input (playAgain) and processing errors as required as well as the correct responses (y/n) 
+                    
+                    if (playAgain.Length > 1)       // First check if the user typed in a sentence out at random for the y/n prompt
+                    {
+                        Console.WriteLine("Error: String must be exactly one character long. Please try again.");
+                    }
                     // Process a valid "no" response. 
-                    if (playAgain.ToLower() == "n")
+                    else if (playAgain.ToLower() == "n") 
                     {
                         continueGame = false;
                         validContinueGameResponse = true;
-                        continue; // Skip the rest of the evaluation in the do/while loop 
+                    }
+                    // Process a valid "yes" response.
+                    else if (playAgain.ToLower() == "y")
+                    {
+                        continueGame = true;
+                        validContinueGameResponse = true;
+                    }
+                    else
+                    // It's not longer than 1 in length, it's not a 'y' or 'n', so it has to be some other single char
+                    {
+                        Console.WriteLine("Error: Must be 'Y' or 'N'. Please try again.");
+                    }
+                    
+                    
+                    /*
+                    
+                    // Next, let's check if the answer falls within acceptable choices. Doing th
+                    else if (Array.IndexOf(new string[] {"y", "n"}, playAgain.ToLower()) == -1) 
+                    {
+                        
+                    }
+                    // Process a valid "no" response. 
+                    if (playAgain.ToLower() == "n")
+                    {
+                        
                     }
 
                     // Process a valid "yes" response.
@@ -66,10 +88,7 @@ namespace TicTacToe
                         continue;
                     }
 
-                    if (playAgain.Length > 1)
-                    {
-                        Console.WriteLine("Error: String must be exactly one character long. Please try again.");
-                    }
+                    
 
                     // Save time by checking if the value of the variable playAgain is in an array of acceptable single letter responses. Also caters for
                     // case insensitivity by converting the response to lowercase by default and then comparing. 
@@ -77,8 +96,8 @@ namespace TicTacToe
                     // Tried using { }.method(), then I read https://stackoverflow.com/questions/30509177/cant-use-an-inline-array-in-c
                     if (Array.IndexOf((new[] { "y", "n" }), playAgain.ToLower()) == -1 && playAgain.Length == 1)
                     {
-                        Console.WriteLine("Error: Must be 'Y' or 'N'. Please try again.");
-                    }
+                        
+                    }*/
                 } while (!validContinueGameResponse);
                 
                 // Increase the game count to change the starting player for the next game
