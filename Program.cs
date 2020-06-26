@@ -4,11 +4,10 @@ namespace TicTacToe
 {
     class Program
     {
-        // Multidimensional array definition, https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/arrays/multidimensional-arrays
-        public static char[,] emptyBoard = new char[3, 3] { { '1', '2', '3' }, { '4', '5', '6' }, { '7', '8', '9' } };
-        // public static char[] players = new char[] { 'X', 'O' }; Probably not needed
-        public static int gameCount = 1; // Will be used to decide which player's turn is next
-        public static char currentPlayer; //= (gameCount % 2 == 0) ? 'O' : 'X';
+        // Multidimensional array definition with fixed size, https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/arrays/multidimensional-arrays
+        static char[,] emptyBoard = new char[3, 3] { { '1', '2', '3' }, { '4', '5', '6' }, { '7', '8', '9' } };
+        static int gameCount = 1; // Will be used to decide which player's turn is next
+        static char currentPlayer; //= (gameCount % 2 == 0) ? 'O' : 'X';
 
         // There has got to be a better way of creating this var - investigate
         // It would have been easier to use an array with single dimensions
@@ -18,7 +17,7 @@ namespace TicTacToe
         {
             bool continueGame = true; // Game continues until this is false
             
-            // This is where the logic for repeat-game will go 
+            // Game on auto-repeat unless continueGame is false
             do
             {
                 // Continue game prompt boolean var, when false "play again" question will repeat. Needs to be in this context to reset on every repeat game
@@ -28,15 +27,17 @@ namespace TicTacToe
                 currentPlayer = (gameCount % 2 == 0) ? 'O' : 'X';
                 
                 // Clear the gameState variable - investigate better way to achieve this
-                for (int i = 0; i < 3; i++) 
+                gameState = new char[3, 3] { { ' ', ' ', ' ' }, { ' ', ' ', ' ' }, { ' ', ' ', ' ' } };
+                
+                /*for (int i = 0; i < 3; i++) 
                 {
                     for (int j = 0; j < 3; j++)
                     { gameState[i, j] = ' '; }
                     }
-
+                */
                 PlayGame();
 
-                // Play again prompt on repeat
+                // Play again prompt on auto-repeat
                 do
                 {
                     Console.Write("Would you like to play again? (Y/N): ");
@@ -102,8 +103,11 @@ namespace TicTacToe
             {
                 
                 PrintGameBoard();
+                // gameOver = checkGameState();
+                // validPlayerMovement = gameOver;
 
                 do
+                //while (!validPlayerMovement)
                 {
                     Console.Write($"Player {currentPlayer}, please enter a square number to place your token in: ");
                     string currentPlayerMove = Console.ReadLine();
@@ -174,10 +178,13 @@ namespace TicTacToe
                         {
                             // Increase the move count to change the current player
                             moveCount++;
-                            // Change the player for the next move
-                            currentPlayer = (moveCount % 2 == 0) ? 'O' : 'X';
+                            // Change the player for the next move -- fix error here 
+                            currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
+                            // Check game state (are there any winners, is there a draw?)
+                            gameOver = checkGameState();
                             // Current move is over
                             validPlayerMovement = true;
+                            
                         }
                     }
                     else
@@ -187,7 +194,7 @@ namespace TicTacToe
                     }
 
                 } while (!validPlayerMovement);
-                
+
 
                 // Fake check if board is full
                 if (moveCount == 10) { gameOver = true; }
@@ -196,7 +203,7 @@ namespace TicTacToe
 
         }
     
-
+    // Procedure for generating a 
 
     static void PrintGameBoard()
         {
@@ -220,14 +227,15 @@ namespace TicTacToe
                 Console.WriteLine(horizLine);
                 for (int arrRow = 0; arrRow < 3; arrRow++)
                 {
+                    // Interpolated string
+                    // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/tokens/interpolated
                     Console.Write($"{vertDelim}");
                     for (int arrCol = 0; arrCol < 3; arrCol++)
                     {
-                        // Allows for passing boardVar to Write, as opposed to using interpolated strings (see below for ref.)
+                        // Allows for passing boardVar to Write, which can't be done using interpolated strings (see below for ref.)
                         Console.Write("{0}{1}{0}{2}", blankSpace, boardVar[arrRow, arrCol], vertDelim);
                     }
-                    // Interpolated string.
-                    // INSERT REFERENCE HERE
+
                     Console.WriteLine($"\n{horizLine}");
                 }
             }
@@ -241,5 +249,103 @@ namespace TicTacToe
             genBoard(gameState);
 
         }
-    }
+
+        // Function checkGameState looks at the rows, columns and two diagonals of the gameState array.
+        // If a sequence of 3 consecutive 'X' or 'O' characters has been found, it prints the game board,
+        // declares a winner and returns true. Return value is set to the gameOver variable which stops
+        // the execution of the specific game currently in progress.
+
+        static bool checkGameState()
+        {
+
+            // Check if game is a draw, the cheesy way
+            int fullBoard = 0;
+            foreach (char playerMove in gameState )
+            {
+                if (playerMove != ' ') { fullBoard++; }
+            }
+
+            if (fullBoard == 9) 
+            {
+                PrintGameBoard();
+                Console.WriteLine("The game was a draw.");
+                return (true);
+            }
+
+            // Check gameState columns
+            for (int arrCol = 0; arrCol < 3; arrCol++)
+            {
+                string colCheck = "";
+                for (int arrRow = 0; arrRow < 3; arrRow++)
+                {
+                    colCheck = colCheck + gameState[arrRow, arrCol].ToString();
+                }
+
+                switch (colCheck)
+                {
+                    case "XXX":
+                        PrintGameBoard();
+                        Console.WriteLine("Player X was the winner!");
+                        return (true);
+                    case "OOO":
+                        PrintGameBoard();
+                        Console.WriteLine("Player O was the winner!");
+                        return (true);
+                    default:
+                        break;
+                }
+            }
+
+            // Check gameState rows
+            for (int arrRow = 0; arrRow < 3; arrRow++)
+            {
+                string rowCheck = "";
+                for (int arrCol = 0; arrCol < 3; arrCol++)
+                {
+                    rowCheck = rowCheck + gameState[arrRow, arrCol].ToString();
+                }
+
+                switch (rowCheck)
+                {
+                    case "XXX":
+                        PrintGameBoard();
+                        Console.WriteLine("Player X was the winner!");
+                        return (true);
+                    case "OOO":
+                        PrintGameBoard();
+                        Console.WriteLine("Player O was the winner!");
+                        return (true);
+                    default:
+                        break;
+                }
+            }
+
+            // Check gameState diagonals
+            string diagonalCheck1 = "", diagonalCheck2 = "";
+            for (int arrRow = 0; arrRow < 3; arrRow++)
+            {
+                diagonalCheck1 = diagonalCheck1 + gameState[arrRow, arrRow].ToString();
+                diagonalCheck2 = diagonalCheck2 + gameState[arrRow, 2 - arrRow].ToString();
+            }
+            
+            switch (diagonalCheck1)
+            {
+                case "XXX":
+                    PrintGameBoard();
+                    Console.WriteLine("Player X was the winner!");
+                    return (true);
+                case "OOO":
+                    PrintGameBoard();
+                    Console.WriteLine("Player O was the winner!");
+                    return (true);
+                default:
+                    break;
+            }
+
+            return (false);
+        }
+
+    } // End of Program
+
+    
 }
