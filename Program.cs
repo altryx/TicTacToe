@@ -4,14 +4,15 @@ namespace TicTacToe
 {
     class Program
     {
-        // Multidimensional array definition with fixed size, https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/arrays/multidimensional-arrays
+        // Declaring a multidimensional array with a fixed size
+        // https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/arrays/multidimensional-arrays
         static char[,] emptyBoard = new char[3, 3] { { '1', '2', '3' }, { '4', '5', '6' }, { '7', '8', '9' } };
         static int gameCount = 1; // Will be used to decide which player's turn is next
         static char currentPlayer; //= (gameCount % 2 == 0) ? 'O' : 'X';
 
         // There has got to be a better way of creating this var - investigate
-        // It would have been easier to use an array with single dimensions
-        public static char[,] gameState = new char[3, 3] { { ' ', ' ', ' ' }, { ' ', ' ', ' ' }, { ' ', ' ', ' ' } };
+        // It would have been easier to use an array with single dimension instead though
+        static char[,] gameState = new char[3, 3] { { ' ', ' ', ' ' }, { ' ', ' ', ' ' }, { ' ', ' ', ' ' } };
 
         static void Main(string[] args)
         {
@@ -23,12 +24,13 @@ namespace TicTacToe
                 // Continue game prompt boolean var, when false "play again" question will repeat. Needs to be in this context to reset on every repeat game
                 bool validContinueGameResponse = false;
 
-                // Change player on each run, start with X *** revise ***
+                // Change player on each run, start with X 
                 currentPlayer = (gameCount % 2 == 0) ? 'O' : 'X';
                 
                 // Clear the gameState variable when starting a new game
                 gameState = new char[3, 3] { { ' ', ' ', ' ' }, { ' ', ' ', ' ' }, { ' ', ' ', ' ' } };
             
+                // Start a round of tic-tac-toe
                 PlayGame();
 
                 // Play again on auto-repeat - allows for prompting the player and repeating a game should the user choose so
@@ -61,43 +63,11 @@ namespace TicTacToe
                         validContinueGameResponse = true;
                     }
                     else
-                    // It's not longer than 1 in length, it's not a 'y' or 'n', so it has to be some other single char
+                    // It's not longer than 1 in length, it's not a 'y' or 'n', so it has to be some other single char. This will also catch empty/blank input
                     {
                         Console.WriteLine("Error: Must be 'Y' or 'N'. Please try again.");
                     }
                     
-                    
-                    /*
-                    
-                    // Next, let's check if the answer falls within acceptable choices. Doing th
-                    else if (Array.IndexOf(new string[] {"y", "n"}, playAgain.ToLower()) == -1) 
-                    {
-                        
-                    }
-                    // Process a valid "no" response. 
-                    if (playAgain.ToLower() == "n")
-                    {
-                        
-                    }
-
-                    // Process a valid "yes" response.
-                    if (playAgain.ToLower() == "y")
-                    {
-                        continueGame = true;
-                        validContinueGameResponse = true;
-                        continue;
-                    }
-
-                    
-
-                    // Save time by checking if the value of the variable playAgain is in an array of acceptable single letter responses. Also caters for
-                    // case insensitivity by converting the response to lowercase by default and then comparing. 
-                    // Read https://stackoverflow.com/questions/13257458/check-if-a-value-is-in-an-array-c 
-                    // Tried using { }.method(), then I read https://stackoverflow.com/questions/30509177/cant-use-an-inline-array-in-c
-                    if (Array.IndexOf((new[] { "y", "n" }), playAgain.ToLower()) == -1 && playAgain.Length == 1)
-                    {
-                        
-                    }*/
                 } while (!validContinueGameResponse);
                 
                 // Increase the game count to change the starting player for the next game
@@ -106,6 +76,8 @@ namespace TicTacToe
 
         }
 
+
+        // Procedure that handles game mechanics (user inputs )
         static void PlayGame()
         {
             
@@ -120,14 +92,12 @@ namespace TicTacToe
             
             do
             {
-                
+                // Print the game board ...        
                 PrintGameBoard();
-                // gameOver = checkGameState();
-                // validPlayerMovement = gameOver;
 
                 do
-                //while (!validPlayerMovement)
                 {
+                    validPlayerMovement = false; // Resolution for Bug 1 
                     Console.Write($"Player {currentPlayer}, please enter a square number to place your token in: ");
                     string currentPlayerMove = Console.ReadLine();
 
@@ -148,8 +118,8 @@ namespace TicTacToe
                                 gameState[0, playerMove - 1] = currentPlayer;
                                 return (false);
                             }
-                        }
-                        else if (playerMove > 3 && playerMove <= 6)
+                        } //playerMove > 3 and <= 6
+                        else if (playerMove <= 6)
                         {
                             // Rebase for the number of columns (subtract 3 from playerMove) and the 0-based index (subtract 1)
                             if (gameState[1, playerMove - 4] != ' ')
@@ -164,7 +134,7 @@ namespace TicTacToe
                         }
                         else
                         {
-                            // Rebase for the number of columns (subtract 6 because it's in row 3)
+                            // Rebase for the number of columns (subtract 6 because it's in row 3, subtract 1 to correct for index)
                             if (gameState[2, playerMove - 7] != ' ')
                             {
                                 return (true);
@@ -191,13 +161,12 @@ namespace TicTacToe
                         {
                             // The number chosen has already been taken
                             Console.WriteLine("Error: That square number is already occupied. Please try again.");
-                            validPlayerMovement = false;
                         }
                         else
                         {
                             // Increase the move count to change the current player
                             moveCount++;
-                            // Change the player for the next move -- fix error here 
+                            // Change the player for the next move
                             currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
                             // Check game state (are there any winners, is there a draw?)
                             gameOver = checkGameState();
@@ -214,44 +183,47 @@ namespace TicTacToe
 
                 } while (!validPlayerMovement);
 
-
-                // Fake check if board is full
-                if (moveCount == 10) { gameOver = true; }
-
             } while (!gameOver);
 
         }
     
-    // Procedure for generating a 
+    // Procedure for generating an empty gameboard as well as the game status board. 
 
     static void PrintGameBoard()
         {
             // Create the numbered grid, with 2 blanks/spaces around the number/symbol. 
             // I wasn't happy with just manually entering the req'd number of dashes, but rather opted to use
-            // the string constructor to allow for a bit of flexibility in terms of grid spacing.
+            // the string constructor to allow for a bit of flexibility in terms of grid spacing. This may come in
+            // handy should one want to change the spacing/sizing in the future
             // ref: https://stackoverflow.com/questions/3754582/is-there-an-easy-way-to-return-a-string-repeated-x-number-of-times
 
-            string horizLine = new string('-', 13);
-            string blankSpace = new string(' ', 1);     // Whitespace around the number
-            char vertDelim = '|';
+            string horizLine = new string('-', 13);     // 13 dashes
+            string blankSpace = new string(' ', 1);     // Whitespace around the number, a single space. 
+            char vertDelim = '|';                       // Symbol for vertical lines
 
             // Clear console
             // https://docs.microsoft.com/en-us/dotnet/api/system.console.clear?view=netcore-3.1
 
             Console.Clear();
 
-            // Passing arrays as arguments. Could learn from Main() declaration
+            // Passing a character array as an argument to a procedure, idea being to recycle the code for drawing the board and substitute numbers 
+            // or symbols using an array. Using a for loop which draws row per row.
             void genBoard(char[,] boardVar)
             {
-                Console.WriteLine(horizLine);
+                // Horizontal line above the grid
+                Console.WriteLine(horizLine); 
+
+                // Let's go row by row of the array
                 for (int arrRow = 0; arrRow < 3; arrRow++)
                 {
-                    // Interpolated string
+                    // Interpolated string. It's more concise. I like concise
                     // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/tokens/interpolated
                     Console.Write($"{vertDelim}");
+
+                    // Column by column
                     for (int arrCol = 0; arrCol < 3; arrCol++)
                     {
-                        // Allows for passing boardVar to Write, which can't be done using interpolated strings (see below for ref.)
+                        // Allows for passing boardVar to Write, which can't be done using interpolated strings (see above for ref.)
                         Console.Write("{0}{1}{0}{2}", blankSpace, boardVar[arrRow, arrCol], vertDelim);
                     }
 
@@ -259,11 +231,11 @@ namespace TicTacToe
                 }
             }
 
-            // Blank board
+            // Generate blank board
             Console.WriteLine("Game Board Positions:");
             genBoard(emptyBoard);
 
-            // Status board
+            // Generate status board
             Console.WriteLine("\nGame Board Status:");
             genBoard(gameState);
 
