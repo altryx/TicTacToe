@@ -39,15 +39,19 @@ Clone the repo or download a copy. Execute `dotnet run` in the local repo direct
 ## Screenshots
 
 Game after startup
+
 ![image](https://user-images.githubusercontent.com/60409723/85960699-d59d2280-b962-11ea-8513-6b191f79934d.png)
 
 Game after a win
+
 ![image](https://user-images.githubusercontent.com/60409723/85960676-9bcc1c00-b962-11ea-88da-5c93749aae47.png)
 
 Game after a draw
+
 ![image](https://user-images.githubusercontent.com/60409723/85960716-f9606880-b962-11ea-8dda-8a4d3ec9d2ea.png)
 
 Game prompts during incorrect user input on each move
+
 ![image](https://user-images.githubusercontent.com/60409723/85960750-2280f900-b963-11ea-96b5-ab50c991acf1.png)
 
 
