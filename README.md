@@ -32,28 +32,28 @@ This is my second C# program - a simple Tic Tac Toe game. I will not be acceptin
 
 ## Build requirements and instructions
 
-.NET Core 3.1 or newer. 
+.NET Core SDK 3.1 or newer. Older versions would probably work too but haven't been tested. 
 
-Clone the repo or download a copy. Execute `dotnet run` in the local repo directory.
+Clone the repo or download a copy/extract in a directory of own choice. Execute `dotnet run` in the local repo directory.
 
 ## Screenshots
 
-Game after startup
-
-![image](https://user-images.githubusercontent.com/60409723/85960699-d59d2280-b962-11ea-8513-6b191f79934d.png)
-
-Game after a win
+| ![image](https://user-images.githubusercontent.com/60409723/85960699-d59d2280-b962-11ea-8513-6b191f79934d.png) |
+|:--:| 
+| *Game after startup* |
 
 ![image](https://user-images.githubusercontent.com/60409723/85960676-9bcc1c00-b962-11ea-88da-5c93749aae47.png)
-
-Game after a draw
+|:--:| 
+| *Game after a win* |
 
 ![image](https://user-images.githubusercontent.com/60409723/85960716-f9606880-b962-11ea-8dda-8a4d3ec9d2ea.png)
-
-Game prompts during incorrect user input on each move
+|:--:| 
+| *Game after a draw* |
 
 ![image](https://user-images.githubusercontent.com/60409723/85960750-2280f900-b963-11ea-96b5-ab50c991acf1.png)
+|:--:| 
+| *Game prompts during incorrect user input on each move* |
 
 
 ## Trello project board
-Access the Trello board [here](https://trello.com/b/WpSL1ljr/c-tic-tac-toe)
+Access the Trello board for the project [here](https://trello.com/b/WpSL1ljr/c-tic-tac-toe)
