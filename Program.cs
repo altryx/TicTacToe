@@ -77,7 +77,7 @@ namespace TicTacToe
         }
 
 
-        // Procedure that handles game mechanics (user inputs )
+        // Procedure that handles game mechanics (user inputs and associated errors)
         static void PlayGame()
         {
             
@@ -92,18 +92,24 @@ namespace TicTacToe
             
             do
             {
-                // Print the game board ...        
+                // This loop allows for the game to carry on until an end-state has been reached (one of the players wins, or the game is a draw)
+
+                // Print the game board
                 PrintGameBoard();
+
+                // Handle the player input. This loop controls the prompts in case incorrect input has been provided. Contains a function/(method) for 
+                // checking if a position has already been taken. Depends on the checkGameState to verify game state, i.e. (win/draw).
 
                 do
                 {
-                    validPlayerMovement = false; // Resolution for Bug 1 
-                    Console.Write($"Player {currentPlayer}, please enter a square number to place your token in: ");
+                    validPlayerMovement = false; // Resolution for Bug 1. Resets the validPlayerMovement var after a successful move
+
+                    Console.Write($"\nPlayer {currentPlayer}, please enter a square number to place your token in: ");
                     string currentPlayerMove = Console.ReadLine();
 
                     // Function for checking if the position in the grid has been taken by a symbol (player)
                     // If taken, returns true. If not taken, returns false and sets the value at the appropriate position in the gameState array equal
-                    // to the currentPlayer symbol. Consequence of the 3x3 array
+                    // to the currentPlayer symbol. 
                     bool checkSetPlayerPosition(int playerMove)
                     {
                         if (playerMove <= 3)
@@ -185,7 +191,7 @@ namespace TicTacToe
 
             } while (!gameOver);
 
-        }
+        } // End of PlayGame()
     
     // Procedure for generating an empty gameboard as well as the game status board. 
 
@@ -251,19 +257,20 @@ namespace TicTacToe
 
             // Check if game is a draw, the cheesy way
             int fullBoard = 0;
-            foreach (char playerMove in gameState )
+            foreach (char playerMove in gameState)
             {
                 if (playerMove != ' ') { fullBoard++; }
             }
 
-            if (fullBoard == 9) 
+            if (fullBoard == 9)
             {
                 PrintGameBoard();
                 Console.WriteLine("The game was a draw.");
                 return (true);
             }
 
-            // Check gameState columns
+            // Check gameState columns. The idea is to concat the values in across the row for each column, then compare to a 
+            // string XXX or OOO. 
             for (int arrCol = 0; arrCol < 3; arrCol++)
             {
                 string colCheck = "";
@@ -311,28 +318,40 @@ namespace TicTacToe
                 }
             }
 
-            // Check gameState diagonals
+            // Check gameState diagonals. I don't like having too many for loops, so two diagonals are determined
+            // using a single loop. 
             string diagonalCheck1 = "", diagonalCheck2 = "";
             for (int arrRow = 0; arrRow < 3; arrRow++)
             {
                 diagonalCheck1 = diagonalCheck1 + gameState[arrRow, arrRow].ToString();
                 diagonalCheck2 = diagonalCheck2 + gameState[arrRow, 2 - arrRow].ToString();
             }
-            
-            switch (diagonalCheck1)
-            {
-                case "XXX":
-                    PrintGameBoard();
-                    Console.WriteLine("Player X was the winner!");
-                    return (true);
-                case "OOO":
-                    PrintGameBoard();
-                    Console.WriteLine("Player O was the winner!");
-                    return (true);
-                default:
-                    break;
-            }
 
+            // I don't like repeating chunks of code unless necessary, so here's a foreach loop to determine if either of 
+            // the two variables with diagonals (diagonalCheck1 and diagonalCheck2) contains a winning combination. 
+            // I could do this since I did not have a loop within a loop like for column/row checks above
+
+            // Note: This is also a bug fix for Bug 2: Initial version only checked one diagonal for a winner.
+
+            // Reference https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/arrays/using-foreach-with-arrays
+
+            foreach (string selDiag in new string[] { diagonalCheck1, diagonalCheck2 } )
+            {
+                switch (selDiag)
+                {
+                    case "XXX":
+                        PrintGameBoard();
+                        Console.WriteLine("Player X was the winner!");
+                        return (true);
+                    case "OOO":
+                        PrintGameBoard();
+                        Console.WriteLine("Player O was the winner!");
+                        return (true);
+                    default:
+                        break;
+                }
+            }
+            // Covers fail-safe scenario
             return (false);
         }
 
